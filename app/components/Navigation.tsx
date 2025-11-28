@@ -3,6 +3,7 @@
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { useState } from 'react';
+import Image from 'next/image';
 
 const navItems = [
     { href: '/', label: 'The Oluwasemowo Legacy' },
@@ -30,13 +31,16 @@ export function Navigation() {
             <div className="container mx-auto px-4">
                 <div className="flex md:flex-wrap items-center justify-between py-4">
                     {/* Logo/Brand */}
-                    <Link
-                        href="/"
-                        className="text-xl md:text-2xl font-bold text-red-800 hover:text-red-900 transition-colors"
-                        onClick={closeMobileMenu}
-                    >
-                        The Oluwasemowo Legacy
-                    </Link>
+                    <div className='flex items-center gap-2'>
+                        <Image src="/images/logo/jmj2.png" alt="The Oluwasemowo Legacy" width={48} height={48} />
+                        <Link
+                            href="/"
+                            className="text-xl md:text-2xl font-bold text-red-800 hover:text-red-900 transition-colors"
+                            onClick={closeMobileMenu}
+                        >
+                            The Oluwasemowo Legacy
+                        </Link>
+                    </div>
 
                     {/* Desktop Navigation */}
                     <div className="hidden md:flex gap-4">

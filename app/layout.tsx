@@ -30,6 +30,11 @@ const lora = Lora({
 export const metadata: Metadata = {
   title: "The Oluwasemowo Legacy - In Loving Memory",
   description: "A tribute to the life and legacy of Pa Evangelist Omotayo Johnson Oluwasemowo",
+  icons: {
+    icon: '/images/logo/jmj1.png',
+    shortcut: '/images/logo/jmj1.png',
+    apple: '/images/logo/jmj1.png',
+  },
 };
 
 export default function RootLayout({
