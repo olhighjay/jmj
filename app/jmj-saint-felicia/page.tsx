@@ -66,27 +66,27 @@ export default function JMJSaintFelicia() {
                         {/* Image 1 - Man speaking with microphone */}
                         <div className="bg-white rounded-lg shadow-md overflow-hidden hover:shadow-lg transition-shadow">
                             <div className="bg-gray-200 h-64 flex items-center justify-center">
-                            <Image src={getImageUrl('/general/Mum and Dad 3.jpg')} alt="JMJ & Saint Felicia"
-                                width={300} height={300} className="service-img"
-                            />
+                                <Image src={getImageUrl('/general/Mum and Dad 3.jpg')} alt="JMJ & Saint Felicia"
+                                    width={300} height={300} className="service-img"
+                                />
                             </div>
                         </div>
 
                         {/* Image 2 - Elderly man portrait */}
                         <div className="bg-white rounded-lg shadow-md overflow-hidden hover:shadow-lg transition-shadow">
                             <div className="bg-gray-200 h-64 flex items-center justify-center">
-                            <Image src={getImageUrl('/general/Daddy _nd_mummy_at_Dadddy70th.jpg')} alt="JMJ & Saint Felicia"
-                                width={300} height={300} className="service-img"
-                            />
+                                <Image src={getImageUrl('/general/Daddy _nd_mummy_at_Dadddy70th.jpg')} alt="JMJ & Saint Felicia"
+                                    width={300} height={300} className="service-img"
+                                />
                             </div>
                         </div>
 
                         {/* Image 3 - Woman with headwrap */}
                         <div className="bg-white rounded-lg shadow-md overflow-hidden hover:shadow-lg transition-shadow">
                             <div className="bg-gray-200 h-64 flex items-center justify-center">
-                            <Image src={getImageUrl('/general/DADA AND MUM 5.jpg')} alt="JMJ & Saint Felicia"
-                                width={300} height={300} className="service-img"
-                            />
+                                <Image src={getImageUrl('/general/DADA AND MUM 5.jpg')} alt="JMJ & Saint Felicia"
+                                    width={300} height={300} className="service-img"
+                                />
                             </div>
                         </div>
                     </div>

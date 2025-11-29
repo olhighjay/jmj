@@ -120,7 +120,7 @@ export default function Home() {
             {/* Secretary */}
             <div className="bg-white rounded-lg shadow-md overflow-hidden hover:shadow-lg transition-shadow">
               <div className="bg-gray-200 h-48 flex items-center justify-center">
-              <Image src={getImageUrl('general/ministry.jpg')} alt="Area Commander" width={300} height={300} className="service-img" />
+                <Image src={getImageUrl('general/ministry.jpg')} alt="Area Commander" width={300} height={300} className="service-img" />
               </div>
               <div className="p-6">
                 <p className="text-gray-700 leading-relaxed">
@@ -132,9 +132,9 @@ export default function Home() {
             {/* Active Member */}
             <div className="bg-white rounded-lg shadow-md overflow-hidden hover:shadow-lg transition-shadow">
               <div className="bg-gray-200 h-48 flex items-center justify-center">
-              <Image src={getImageUrl('general/Handsome JMJ Visiting Children in Lagos.jpg')} 
-              alt="Area Commander" width={300} height={300} className="service-img-center" 
-              />
+                <Image src={getImageUrl('general/Handsome JMJ Visiting Children in Lagos.jpg')}
+                  alt="Area Commander" width={300} height={300} className="service-img-center"
+                />
               </div>
               <div className="p-6">
                 <p className="text-gray-700 leading-relaxed">
@@ -146,7 +146,7 @@ export default function Home() {
             {/* Foundation Member */}
             <div className="bg-white rounded-lg shadow-md overflow-hidden hover:shadow-lg transition-shadow">
               <div className="bg-gray-200 h-48 flex items-center justify-center">
-              <Image src={getImageUrl('general/DAD9.jpg')} alt="Area Commander" width={300} height={300} className="service-img" />
+                <Image src={getImageUrl('general/DAD9.jpg')} alt="Area Commander" width={300} height={300} className="service-img" />
               </div>
               <div className="p-6">
                 <p className="text-gray-700 leading-relaxed">

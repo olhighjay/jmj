@@ -156,7 +156,7 @@ export default function Tributes() {
                 {/* General Tributes Section */}
                 <section className="mb-12">
                     <h2 className="text-3xl md:text-4xl font-bold text-red-800 mb-8 text-center">
-                        General Tributes
+                        Tributes
                     </h2>
                     {isLoading ? (
                         <div className="text-center py-12">

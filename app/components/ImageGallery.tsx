@@ -226,8 +226,8 @@ export function ImageGallery({
                                                         return newSet;
                                                     });
                                                 }}
-                                                onError={(e) => {
-                                                    console.error('Failed to load image:', currentImage.src, e);
+                                                onError={() => {
+                                                    console.error('Failed to load image:', currentImage.src);
                                                     setImageErrors((prev) => new Set(prev).add(currentIndex));
                                                     setLoadedImages((prev) => {
                                                         const newSet = new Set(prev);

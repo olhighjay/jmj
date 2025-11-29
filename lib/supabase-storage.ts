@@ -6,8 +6,9 @@
 
 import { supabase } from './supabase';
 
-const IMG_STORAGE_BUCKET = process.env.NEXT_PUBLIC_SUPABASE_IMAGE_STORAGE_BUCKET as string; 
-const VID_STORAGE_BUCKET = process.env.NEXT_PUBLIC_SUPABASE_VIDEO_STORAGE_BUCKET as string; 
+// Use a single bucket name, fallback to 'images' if not set
+const IMG_STORAGE_BUCKET = process.env.NEXT_PUBLIC_SUPABASE_IMAGE_STORAGE_BUCKET || process.env.NEXT_PUBLIC_SUPABASE_STORAGE_BUCKET || 'images';
+const VID_STORAGE_BUCKET = process.env.NEXT_PUBLIC_SUPABASE_VIDEO_STORAGE_BUCKET || process.env.NEXT_PUBLIC_SUPABASE_STORAGE_BUCKET || 'videos';
 
 /**
  * Get the public URL for an image stored in Supabase Storage
