@@ -6,21 +6,23 @@
 
 import { supabase } from './supabase';
 
-const STORAGE_BUCKET = process.env.NEXT_PUBLIC_SUPABASE_STORAGE_BUCKET as string; // Name of your Supabase Storage bucket
+const IMG_STORAGE_BUCKET = process.env.NEXT_PUBLIC_SUPABASE_IMAGE_STORAGE_BUCKET as string; 
+const VID_STORAGE_BUCKET = process.env.NEXT_PUBLIC_SUPABASE_VIDEO_STORAGE_BUCKET as string; 
 
 /**
  * Get the public URL for an image stored in Supabase Storage
  * @param path - Path to the image in the bucket (e.g., 'header/Daddy-hero-1.jpg')
+ * @param video - Whether the path is for a video (default is false)
  * @returns Public URL to the image
  */
-export function getImageUrl(path: string): string {
+export function getImageUrl(path: string, video: boolean = false): string {
     if (!supabase) {
         // Fallback to local path if Supabase is not configured
         return `/images/${path}`;
     }
 
     const { data } = supabase.storage
-        .from(STORAGE_BUCKET)
+        .from(video ? VID_STORAGE_BUCKET : IMG_STORAGE_BUCKET)
         .getPublicUrl(path);
 
     return data.publicUrl;
@@ -43,13 +45,15 @@ export function getImageUrls(paths: string[]): string[] {
  */
 export async function uploadImage(
     file: File,
-    path: string
+    path: string,
+    video: boolean = false
 ): Promise<{ url: string; error: null } | { url: null; error: string }> {
     if (!supabase) {
         return { url: null, error: 'Supabase is not configured' };
     }
 
     try {
+        const STORAGE_BUCKET = video ? VID_STORAGE_BUCKET : IMG_STORAGE_BUCKET;
         // Upload the file
         const { data, error } = await supabase.storage
             .from(STORAGE_BUCKET)
@@ -78,12 +82,13 @@ export async function uploadImage(
  * Delete an image from Supabase Storage
  * @param path - Path to the image in the bucket
  */
-export async function deleteImage(path: string): Promise<{ success: boolean; error: string | null }> {
+export async function deleteImage(path: string, video: boolean = false): Promise<{ success: boolean; error: string | null }> {
     if (!supabase) {
         return { success: false, error: 'Supabase is not configured' };
     }
 
     try {
+        const STORAGE_BUCKET = video ? VID_STORAGE_BUCKET : IMG_STORAGE_BUCKET;
         const { error } = await supabase.storage
             .from(STORAGE_BUCKET)
             .remove([path]);

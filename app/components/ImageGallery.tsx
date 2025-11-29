@@ -8,6 +8,7 @@ interface GalleryImage {
     src: string;
     alt: string;
     caption?: string;
+    type?: 'image' | 'video';
 }
 
 interface ImageGalleryProps {
@@ -72,6 +73,17 @@ export function ImageGallery({
     if (!isOpen || !images[currentIndex]) return null;
 
     const currentImage = images[currentIndex];
+
+    // Helper function to determine if current item is a video
+    const isVideo = (src: string, type?: 'image' | 'video'): boolean => {
+        if (type === 'video') return true;
+        if (type === 'image') return false;
+        // Auto-detect by file extension
+        const videoExtensions = ['.mp4', '.webm', '.ogg', '.mov', '.avi'];
+        return videoExtensions.some(ext => src.toLowerCase().endsWith(ext));
+    };
+
+    const currentIsVideo = isVideo(currentImage?.src || '', currentImage?.type);
 
     return (
         <div
@@ -159,17 +171,15 @@ export function ImageGallery({
                 <div className="relative w-full h-full flex flex-col items-center justify-center">
                     {currentImage.src ? (
                         <div className="relative w-full h-full max-h-[80vh] flex items-center justify-center">
-                            {!imageError ? (
-                                <>
-                                    <Image
+                            {currentIsVideo ? (
+                                <div className="relative w-full h-full max-h-[80vh] flex items-center justify-center">
+                                    <video
                                         key={`${currentIndex}-${currentImage.src}`}
                                         src={currentImage.src}
-                                        alt={currentImage.alt}
-                                        fill
-                                        className={`object-contain transition-opacity duration-300 ${imageLoaded ? 'opacity-100' : 'opacity-0'
-                                            }`}
-                                        onLoad={() => {
-                                            console.log('Image loaded successfully:', currentImage.src);
+                                        controls
+                                        className="max-w-full max-h-[80vh] w-auto h-auto"
+                                        onLoadedData={() => {
+                                            console.log('Video loaded successfully:', currentImage.src);
                                             setLoadedImages((prev) => new Set(prev).add(currentIndex));
                                             setImageErrors((prev) => {
                                                 const newSet = new Set(prev);
@@ -178,7 +188,7 @@ export function ImageGallery({
                                             });
                                         }}
                                         onError={(e) => {
-                                            console.error('Failed to load image:', currentImage.src, e);
+                                            console.error('Failed to load video:', currentImage.src, e);
                                             setImageErrors((prev) => new Set(prev).add(currentIndex));
                                             setLoadedImages((prev) => {
                                                 const newSet = new Set(prev);
@@ -186,22 +196,63 @@ export function ImageGallery({
                                                 return newSet;
                                             });
                                         }}
-                                        unoptimized={true}
-                                        priority
-                                    />
+                                        autoPlay={false}
+                                    >
+                                        Your browser does not support the video tag.
+                                    </video>
                                     {!imageLoaded && !imageError && (
                                         <div className="absolute inset-0 flex items-center justify-center">
                                             <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-white"></div>
                                         </div>
                                     )}
-                                </>
-                            ) : (
-                                <div className="absolute inset-0 flex items-center justify-center">
-                                    <div className="text-center text-white">
-                                        <p className="text-lg mb-2">Failed to load image</p>
-                                        <p className="text-sm text-gray-400">{currentImage.alt}</p>
-                                    </div>
                                 </div>
+                            ) : (
+                                <>
+                                    {!imageError ? (
+                                        <>
+                                            <Image
+                                                key={`${currentIndex}-${currentImage.src}`}
+                                                src={currentImage.src}
+                                                alt={currentImage.alt}
+                                                fill
+                                                className={`object-contain transition-opacity duration-300 ${imageLoaded ? 'opacity-100' : 'opacity-0'
+                                                    }`}
+                                                onLoad={() => {
+                                                    console.log('Image loaded successfully:', currentImage.src);
+                                                    setLoadedImages((prev) => new Set(prev).add(currentIndex));
+                                                    setImageErrors((prev) => {
+                                                        const newSet = new Set(prev);
+                                                        newSet.delete(currentIndex);
+                                                        return newSet;
+                                                    });
+                                                }}
+                                                onError={(e) => {
+                                                    console.error('Failed to load image:', currentImage.src, e);
+                                                    setImageErrors((prev) => new Set(prev).add(currentIndex));
+                                                    setLoadedImages((prev) => {
+                                                        const newSet = new Set(prev);
+                                                        newSet.delete(currentIndex);
+                                                        return newSet;
+                                                    });
+                                                }}
+                                                unoptimized={true}
+                                                priority
+                                            />
+                                            {!imageLoaded && !imageError && (
+                                                <div className="absolute inset-0 flex items-center justify-center">
+                                                    <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-white"></div>
+                                                </div>
+                                            )}
+                                        </>
+                                    ) : (
+                                        <div className="absolute inset-0 flex items-center justify-center">
+                                            <div className="text-center text-white">
+                                                <p className="text-lg mb-2">Failed to load image</p>
+                                                <p className="text-sm text-gray-400">{currentImage.alt}</p>
+                                            </div>
+                                        </div>
+                                    )}
+                                </>
                             )}
                         </div>
                     ) : (

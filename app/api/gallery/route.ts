@@ -35,6 +35,7 @@ export async function GET() {
             alt: photo.alt,
             caption: photo.caption || '',
             category: photo.category,
+            type: photo.type || (photo.src?.toLowerCase().endsWith('.mp4') || photo.src?.toLowerCase().endsWith('.webm') || photo.src?.toLowerCase().endsWith('.ogg') || photo.src?.toLowerCase().endsWith('.mov') || photo.src?.toLowerCase().endsWith('.avi') ? 'video' : 'image'),
         }));
 
         return NextResponse.json(photos);

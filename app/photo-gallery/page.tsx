@@ -15,6 +15,7 @@ interface GalleryImage {
     alt: string;
     caption?: string;
     category: PhotoCategory;
+    type?: 'image' | 'video'; // Optional type field, defaults to 'image' if not specified
 }
 
 const carouselImage = [
@@ -64,17 +65,25 @@ export default function PhotoGallery() {
         ? photoArray
         : photoArray.filter(photo => photo.category === selectedTab);
 
+    // Helper function to detect if a file is a video
+    const isVideoFile = (src: string): boolean => {
+        const videoExtensions = ['.mp4', '.webm', '.ogg', '.mov', '.avi'];
+        return videoExtensions.some(ext => src.toLowerCase().endsWith(ext));
+    };
+
     // Transform photos for ImageGallery with processed image URLs
     // Remove leading slash for Supabase Storage paths
     const transformedPhotos = filteredPhotos.map(photo => {
         const cleanPath = photo.src.startsWith('/') ? photo.src.slice(1) : photo.src;
-        const imageUrl = getImageUrl(cleanPath);
+        const imageUrl = getImageUrl(cleanPath, photo.type === 'video');
+        const isVideo = photo.type === 'video' || (!photo.type && isVideoFile(photo.src));
         if (process.env.NODE_ENV === 'development') {
-            console.log('Transforming image:', { original: photo.src, cleanPath, imageUrl });
+            console.log('Transforming media:', { original: photo.src, cleanPath, imageUrl, isVideo });
         }
         return {
             ...photo,
             src: imageUrl,
+            type: (isVideo ? 'video' : 'image') as 'image' | 'video',
         };
     });
 
@@ -165,19 +174,42 @@ export default function PhotoGallery() {
                                 onClick={() => openGallery(index)}
                             >
                                 <div className="relative w-full aspect-square bg-gray-200">
-                                    {photo.src ? (
+                                    {photo.src && (photo.type !== 'video' && !isVideoFile(photo.src)) ? (
                                         <Image
-                                            src={getImageUrl(photo.src)}
+                                            src={getImageUrl(photo.src.startsWith('/') ? photo.src.slice(1) : photo.src)}
                                             alt={photo.alt}
                                             fill
                                             className="object-cover"
                                             sizes="(max-width: 640px) 50vw, (max-width: 768px) 33vw, (max-width: 1024px) 25vw, 16vw"
                                         />
+                                    ) : photo.src && (photo.type === 'video' || isVideoFile(photo.src)) ? (
+                                        // Video thumbnail - show video icon overlay
+                                        <div className="w-full h-full bg-gray-800 flex items-center justify-center">
+                                            <div className="text-center">
+                                                <svg
+                                                    className="w-16 h-16 text-white mx-auto mb-2"
+                                                    fill="currentColor"
+                                                    viewBox="0 0 24 24"
+                                                >
+                                                    <path d="M8 5v14l11-7z" />
+                                                </svg>
+                                                <p className="text-white text-xs">Video</p>
+                                            </div>
+                                        </div>
                                     ) : (
                                         <div className="w-full h-full flex items-center justify-center">
                                             <p className="text-gray-400 text-xs text-center px-2">
                                                 Photo {index + 1}
                                             </p>
+                                        </div>
+                                    )}
+                                    {/* Video indicator badge */}
+                                    {(photo.type === 'video' || (photo.src && isVideoFile(photo.src))) && (
+                                        <div className="absolute top-2 right-2 bg-red-600 text-white px-2 py-1 rounded text-xs font-semibold flex items-center gap-1">
+                                            <svg className="w-3 h-3" fill="currentColor" viewBox="0 0 24 24">
+                                                <path d="M8 5v14l11-7z" />
+                                            </svg>
+                                            Video
                                         </div>
                                     )}
                                     {/* Overlay on hover */}
