@@ -1,16 +1,18 @@
 'use client';
 
+import { getImageUrl } from '@/lib/supabase-storage';
 import { HeroCarousel } from '../components/HeroCarousel';
 
 export default function FuneralDetails() {
     const carouselImages = [
         {
-            src: '', // Add image path here
+            src: getImageUrl('/general/jmj.png'),
             alt: 'Transition to Glory',
             title: 'Transition to Glory',
             description: 'Late Evang. Johnson Omotayo Oluwasemowo',
         },
     ];
+
 
     return (
         <div className="min-h-screen bg-gradient-to-b from-gray-50 to-white">

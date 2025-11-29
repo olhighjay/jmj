@@ -28,7 +28,9 @@ export function ImageGallery({
     onPrevious,
 }: ImageGalleryProps) {
     const [loadedImages, setLoadedImages] = useState<Set<number>>(new Set());
+    const [imageErrors, setImageErrors] = useState<Set<number>>(new Set());
     const imageLoaded = loadedImages.has(currentIndex);
+    const imageError = imageErrors.has(currentIndex);
 
     useEffect(() => {
         if (isOpen) {
@@ -41,6 +43,14 @@ export function ImageGallery({
             document.body.style.overflow = 'unset';
         };
     }, [isOpen]);
+
+    // Reset loading state when image changes
+    useEffect(() => {
+        // Don't reset if image is already loaded
+        if (!loadedImages.has(currentIndex) && !imageErrors.has(currentIndex)) {
+            // Image will start loading fresh
+        }
+    }, [currentIndex, loadedImages, imageErrors]);
 
     useEffect(() => {
         const handleKeyDown = (e: KeyboardEvent) => {
@@ -149,21 +159,48 @@ export function ImageGallery({
                 <div className="relative w-full h-full flex flex-col items-center justify-center">
                     {currentImage.src ? (
                         <div className="relative w-full h-full max-h-[80vh] flex items-center justify-center">
-                            <Image
-                                key={currentIndex}
-                                src={currentImage.src}
-                                alt={currentImage.alt}
-                                fill
-                                className={`object-contain transition-opacity duration-300 ${imageLoaded ? 'opacity-100' : 'opacity-0'
-                                    }`}
-                                onLoad={() => {
-                                    setLoadedImages((prev) => new Set(prev).add(currentIndex));
-                                }}
-                                priority
-                            />
-                            {!imageLoaded && (
+                            {!imageError ? (
+                                <>
+                                    <Image
+                                        key={`${currentIndex}-${currentImage.src}`}
+                                        src={currentImage.src}
+                                        alt={currentImage.alt}
+                                        fill
+                                        className={`object-contain transition-opacity duration-300 ${imageLoaded ? 'opacity-100' : 'opacity-0'
+                                            }`}
+                                        onLoad={() => {
+                                            console.log('Image loaded successfully:', currentImage.src);
+                                            setLoadedImages((prev) => new Set(prev).add(currentIndex));
+                                            setImageErrors((prev) => {
+                                                const newSet = new Set(prev);
+                                                newSet.delete(currentIndex);
+                                                return newSet;
+                                            });
+                                        }}
+                                        onError={(e) => {
+                                            console.error('Failed to load image:', currentImage.src, e);
+                                            setImageErrors((prev) => new Set(prev).add(currentIndex));
+                                            setLoadedImages((prev) => {
+                                                const newSet = new Set(prev);
+                                                newSet.delete(currentIndex);
+                                                return newSet;
+                                            });
+                                        }}
+                                        unoptimized={true}
+                                        priority
+                                    />
+                                    {!imageLoaded && !imageError && (
+                                        <div className="absolute inset-0 flex items-center justify-center">
+                                            <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-white"></div>
+                                        </div>
+                                    )}
+                                </>
+                            ) : (
                                 <div className="absolute inset-0 flex items-center justify-center">
-                                    <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-white"></div>
+                                    <div className="text-center text-white">
+                                        <p className="text-lg mb-2">Failed to load image</p>
+                                        <p className="text-sm text-gray-400">{currentImage.alt}</p>
+                                    </div>
                                 </div>
                             )}
                         </div>

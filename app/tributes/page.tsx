@@ -4,6 +4,7 @@ import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { useState } from 'react';
 import { HeroCarousel } from '../components/HeroCarousel';
 import { TributeCard } from '../components/TributeCard';
+import { getImageUrl } from '@/lib/supabase-storage';
 
 interface Tribute {
     id: number;
@@ -13,6 +14,7 @@ interface Tribute {
     date: string;
     isChild?: boolean;
 }
+
 
 async function fetchTributes(): Promise<Tribute[]> {
     const response = await fetch('/api/tributes');
@@ -57,7 +59,7 @@ export default function Tributes() {
 
     const heroImages = [
         {
-            src: '', // Add image path here
+            src: getImageUrl('header/Daddy-hero-1.jpg'),
             alt: 'Tributes',
             title: 'Tributes',
             description: 'Messages of love, respect, and remembrance',
@@ -109,14 +111,14 @@ export default function Tributes() {
             </section>
 
             <main className="container mx-auto px-4 py-16 max-w-6xl">
-                <section className="text-center mb-12">
+                {/* <section className="text-center mb-12">
                     <h1 className="text-4xl md:text-6xl font-bold text-red-800 mb-6">
                         Tributes
                     </h1>
                     <p className="text-lg text-gray-600">
                         Messages of love, respect, and remembrance
                     </p>
-                </section>
+                </section> */}
 
                 {/* Short Description About the Deceased */}
                 <section className="mb-12 bg-white rounded-lg shadow-lg p-8 md:p-12">

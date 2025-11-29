@@ -4,8 +4,10 @@ import { useQuery } from '@tanstack/react-query';
 import { useState } from 'react';
 import Image from 'next/image';
 import { ImageGallery } from '../components/ImageGallery';
+import { getImageUrl } from '@/lib/supabase-storage';
+import { HeroCarousel } from '../components/HeroCarousel';
 
-type PhotoCategory = 'all' | 'children' | 'grandchildren' | 'brigade' | 'personal';
+type PhotoCategory = 'all' | 'children' | 'grandchildren' | 'brigade' | 'personal' | 'family';
 
 interface GalleryImage {
     id: number;
@@ -15,24 +17,15 @@ interface GalleryImage {
     category: PhotoCategory;
 }
 
-// Mock data - replace with actual API call
-const mockPhotos: GalleryImage[] = [
-    { id: 1, src: '/placeholder.jpg', alt: 'Photo 1', caption: 'Memory 1', category: 'children' },
-    { id: 2, src: '/placeholder.jpg', alt: 'Photo 2', caption: 'Memory 2', category: 'children' },
-    { id: 3, src: '/placeholder.jpg', alt: 'Photo 3', caption: 'Memory 3', category: 'grandchildren' },
-    { id: 4, src: '/placeholder.jpg', alt: 'Photo 4', caption: 'Memory 4', category: 'grandchildren' },
-    { id: 5, src: '/placeholder.jpg', alt: 'Photo 5', caption: 'Memory 5', category: 'brigade' },
-    { id: 6, src: '/placeholder.jpg', alt: 'Photo 6', caption: 'Memory 6', category: 'brigade' },
-    { id: 7, src: '/placeholder.jpg', alt: 'Photo 7', caption: 'Memory 7', category: 'personal' },
-    { id: 8, src: '/placeholder.jpg', alt: 'Photo 8', caption: 'Memory 8', category: 'personal' },
-    { id: 9, src: '/placeholder.jpg', alt: 'Photo 9', caption: 'Memory 9', category: 'children' },
-    { id: 10, src: '/placeholder.jpg', alt: 'Photo 10', caption: 'Memory 10', category: 'grandchildren' },
-    { id: 11, src: '/placeholder.jpg', alt: 'Photo 11', caption: 'Memory 11', category: 'brigade' },
-    { id: 12, src: '/placeholder.jpg', alt: 'Photo 12', caption: 'Memory 12', category: 'personal' },
-    { id: 13, src: '/placeholder.jpg', alt: 'Photo 13', caption: 'Memory 13', category: 'children' },
-    { id: 14, src: '/placeholder.jpg', alt: 'Photo 14', caption: 'Memory 14', category: 'grandchildren' },
-    { id: 15, src: '/placeholder.jpg', alt: 'Photo 15', caption: 'Memory 15', category: 'brigade' },
+const carouselImage = [
+    {
+        src: getImageUrl('/general/Dad and Dr Kay 3.png'),
+        alt: 'Dad and Dr Kay',
+        title: 'Photo Gallery',
+        description: 'A collection of cherished memories',
+    },
 ];
+
 
 const tabs: { id: PhotoCategory; label: string }[] = [
     { id: 'all', label: 'All' },
@@ -42,15 +35,22 @@ const tabs: { id: PhotoCategory; label: string }[] = [
     { id: 'personal', label: 'Personal' },
 ];
 
-async function fetchPhotos() {
-    // Replace with actual API call
-    return Promise.resolve(mockPhotos);
+async function fetchPhotos(): Promise<GalleryImage[]> {
+    const response = await fetch('/api/gallery');
+    if (!response.ok) {
+        const errorData = await response.json().catch(() => ({}));
+        const errorMessage = errorData.error || errorData.details || 'Failed to fetch gallery photos';
+        console.error('API Error:', errorMessage, errorData);
+        throw new Error(errorMessage);
+    }
+    return response.json();
 }
 
 export default function PhotoGallery() {
-    const { data: photos, isLoading } = useQuery({
+    const { data: photos, isLoading, error: queryError } = useQuery<GalleryImage[]>({
         queryKey: ['photos'],
         queryFn: fetchPhotos,
+        retry: 1,
     });
 
     const [selectedTab, setSelectedTab] = useState<PhotoCategory>('all');
@@ -63,6 +63,20 @@ export default function PhotoGallery() {
     const filteredPhotos = selectedTab === 'all'
         ? photoArray
         : photoArray.filter(photo => photo.category === selectedTab);
+
+    // Transform photos for ImageGallery with processed image URLs
+    // Remove leading slash for Supabase Storage paths
+    const transformedPhotos = filteredPhotos.map(photo => {
+        const cleanPath = photo.src.startsWith('/') ? photo.src.slice(1) : photo.src;
+        const imageUrl = getImageUrl(cleanPath);
+        if (process.env.NODE_ENV === 'development') {
+            console.log('Transforming image:', { original: photo.src, cleanPath, imageUrl });
+        }
+        return {
+            ...photo,
+            src: imageUrl,
+        };
+    });
 
     const openGallery = (index: number) => {
         setSelectedIndex(index);
@@ -89,28 +103,10 @@ export default function PhotoGallery() {
     return (
         <div className="min-h-screen bg-gradient-to-b from-gray-50 to-white">
             {/* Hero Image with Text Overlay */}
-            <section className="mb-8">
-                <div className="relative w-full h-96 md:h-[500px] overflow-hidden">
-                    <div className="relative w-full h-full bg-gray-200">
-                        {/* Replace with actual image: <Image src="/photo-gallery-hero.jpg" alt="Photo Gallery" fill className="object-cover" /> */}
-                        <div className="w-full h-full flex items-center justify-center">
-                            <p className="text-gray-500">Hero Image Placeholder</p>
-                        </div>
-                        {/* Text Overlay */}
-                        <div className="absolute inset-0 bg-black bg-opacity-40 flex items-center justify-center">
-                            <div className="text-center text-white px-4">
-                                <h2 className="text-3xl md:text-5xl font-bold mb-4">
-                                    Photo Gallery
-                                </h2>
-                                <p className="text-lg md:text-xl">A collection of cherished memories</p>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </section>
+            <HeroCarousel images={carouselImage} autoPlay={false} interval={5000} />
 
             <main className="container mx-auto px-4 py-16 max-w-7xl">
-                <section className="text-center mb-12">
+                {/* <section className="text-center mb-12">
                     <h1
                         className="text-4xl md:text-6xl font-bold text-red-800 mb-6"
                     >
@@ -119,7 +115,7 @@ export default function PhotoGallery() {
                     <p className="text-lg text-gray-600">
                         A collection of cherished memories
                     </p>
-                </section>
+                </section> */}
 
                 {/* Tab Navigation */}
                 <section className="mb-8">
@@ -148,6 +144,14 @@ export default function PhotoGallery() {
                     <div className="text-center py-12">
                         <p className="text-gray-600">Loading photos...</p>
                     </div>
+                ) : queryError ? (
+                    <div className="text-center py-12">
+                        <p className="text-red-600 font-medium mb-2">Error loading photos</p>
+                        <p className="text-sm text-gray-600 mb-4">{queryError.message}</p>
+                        <p className="text-xs text-gray-500">
+                            Please try again later
+                        </p>
+                    </div>
                 ) : filteredPhotos.length === 0 ? (
                     <div className="text-center py-12">
                         <p className="text-gray-600">No photos found in this category.</p>
@@ -163,7 +167,7 @@ export default function PhotoGallery() {
                                 <div className="relative w-full aspect-square bg-gray-200">
                                     {photo.src ? (
                                         <Image
-                                            src={photo.src}
+                                            src={getImageUrl(photo.src)}
                                             alt={photo.alt}
                                             fill
                                             className="object-cover"
@@ -177,7 +181,7 @@ export default function PhotoGallery() {
                                         </div>
                                     )}
                                     {/* Overlay on hover */}
-                                    <div className="absolute inset-0 bg-black bg-opacity-0 hover:bg-opacity-30 transition-opacity flex items-center justify-center">
+                                    <div className="absolute inset-0 bg-opacity-0 hover:bg-opacity-30 transition-opacity flex items-center justify-center">
                                         <svg
                                             className="w-8 h-8 text-white opacity-0 hover:opacity-100 transition-opacity"
                                             fill="none"
@@ -205,7 +209,7 @@ export default function PhotoGallery() {
 
                 {/* Image Gallery Modal */}
                 <ImageGallery
-                    images={filteredPhotos}
+                    images={transformedPhotos}
                     isOpen={isGalleryOpen}
                     currentIndex={selectedIndex}
                     onClose={closeGallery}

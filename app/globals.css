@@ -1,4 +1,5 @@
 @import "tailwindcss";
+@import "./style.css";
 
 :root {
   --background: #ffffff;
@@ -40,12 +41,12 @@ h1, h2, h3, h4, h5, h6 {
 
 
 .bg-ministry-life {
-  background: url('/images/general/ministry.jpg') no-repeat center;
+  background: var(--ministry-image-url, url('/general/ministry.jpg')) no-repeat center;
   background-size: cover;
 }
 
 .bg-professional-life {
-  background-image: url('/images/general/civil.jpg');
+  background-image: var(--professional-image-url, url('/general/civil.jpg'));
   background-size: cover;
   background-position: center;
   background-repeat: no-repeat;

@@ -4,6 +4,7 @@ import "./globals.css";
 import { Providers } from "./providers";
 import { Navigation } from "./components/Navigation";
 import { Footer } from "./components/Footer";
+import { ImageUrlSetter } from "./components/ImageUrlSetter";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -47,6 +48,7 @@ export default function RootLayout({
       <body
         className={`${geistSans.variable} ${geistMono.variable} ${playfairDisplay.variable} ${lora.variable} antialiased`}
       >
+        <ImageUrlSetter />
         <Providers>
           <Navigation />
           {children}
