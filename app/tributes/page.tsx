@@ -275,9 +275,9 @@ export default function Tributes() {
                             </button>
                         </div>
 
-                        <p className="text-sm text-gray-500 text-center">
+                        {/* <p className="text-sm text-gray-500 text-center">
                             Your tribute will be reviewed before being published on this page.
-                        </p>
+                        </p> */}
                     </form>
                 </section>
 
