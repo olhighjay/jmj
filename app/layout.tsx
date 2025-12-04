@@ -32,9 +32,32 @@ export const metadata: Metadata = {
   title: "The Oluwasemowo Legacy - In Loving Memory",
   description: "A tribute to the life and legacy of Pa Evangelist Omotayo Johnson Oluwasemowo",
   icons: {
-    icon: '/images/logo/jmj1.png',
-    shortcut: '/images/logo/jmj1.png',
-    apple: '/images/logo/jmj1.png',
+    icon: [
+      { url: '/images/logo/jmj1.jpg', type: 'image/jpeg' },
+      // { url: '/images/logo/jmj2.png', type: 'image/png' },
+    ],
+    shortcut: '/images/logo/jmj1.jpg',
+    apple: '/images/logo/jmj1.jpg',
+    // apple: '/images/logo/jmj2.png',
+  },
+  openGraph: {
+    title: "The Oluwasemowo Legacy - In Loving Memory",
+    description: "A tribute to the life and legacy of Pa Evangelist Omotayo Johnson Oluwasemowo",
+    images: [
+      {
+        url: '/images/logo/jmj1.jpg',
+        width: 1200,
+        height: 630,
+        alt: 'The Oluwasemowo Legacy',
+      },
+    ],
+    type: 'website',
+  },
+  twitter: {
+    card: 'summary_large_image',
+    title: "The Oluwasemowo Legacy - In Loving Memory",
+    description: "A tribute to the life and legacy of Pa Evangelist Omotayo Johnson Oluwasemowo",
+    images: ['/images/logo/jmj1.jpg'],
   },
 };
 

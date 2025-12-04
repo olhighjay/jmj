@@ -9,6 +9,7 @@ import { supabase } from './supabase';
 // Use a single bucket name, fallback to 'images' if not set
 const IMG_STORAGE_BUCKET = process.env.NEXT_PUBLIC_SUPABASE_IMAGE_STORAGE_BUCKET || process.env.NEXT_PUBLIC_SUPABASE_STORAGE_BUCKET || 'images';
 const VID_STORAGE_BUCKET = process.env.NEXT_PUBLIC_SUPABASE_VIDEO_STORAGE_BUCKET || process.env.NEXT_PUBLIC_SUPABASE_STORAGE_BUCKET || 'videos';
+const PDF_STORAGE_BUCKET = process.env.NEXT_PUBLIC_SUPABASE_PDF_STORAGE_BUCKET || process.env.NEXT_PUBLIC_SUPABASE_STORAGE_BUCKET || 'pdfs';
 
 /**
  * Get the public URL for an image stored in Supabase Storage
@@ -77,6 +78,24 @@ export async function uploadImage(
         const errorMessage = error instanceof Error ? error.message : 'Failed to upload image';
         return { url: null, error: errorMessage };
     }
+}
+
+/**
+ * Get the public URL for a PDF stored in Supabase Storage
+ * @param path - Path to the PDF in the bucket (e.g., 'programs/order-of-program.pdf')
+ * @returns Public URL to the PDF
+ */
+export function getPdfUrl(path: string): string {
+    if (!supabase) {
+        // Fallback to local path if Supabase is not configured
+        return `/pdfs/${path}`;
+    }
+
+    const { data } = supabase.storage
+        .from(PDF_STORAGE_BUCKET)
+        .getPublicUrl(path);
+
+    return data.publicUrl;
 }
 
 /**
